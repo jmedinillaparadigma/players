@@ -1,0 +1,14 @@
+app:
+   name: '@pom.artifactId@'
+   version: '@pom.version@'
+   
+springfox:
+   documentation:
+      swagger:
+         v2:
+            path: /swagger.json
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://microservices:0000@ds127429.mlab.com:27429/microservices

@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: '@pom.artifactId@'
+
+  cloud:
+    config:
+      enabled: false
+#      uri: http://localhost:8081/
+         
+  profiles:
+    active: dev
