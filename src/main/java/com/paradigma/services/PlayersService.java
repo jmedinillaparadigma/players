@@ -1,8 +1,6 @@
 package com.paradigma.services;
 
-import java.util.List;
-
-import com.paradigma.model.CharacterModel;
+import com.paradigma.model.PlayerModel;
 
 /**
  * Interface for the character operations
@@ -11,8 +9,8 @@ import com.paradigma.model.CharacterModel;
 public interface PlayersService {
 
 	/**
-	 * This method retrieves all the available characters stored in the persistence layer
-	 * @return The list containing all the available characters
+	 * This method creates a new Player
+	 * @param playerModel The input parameters to create the player
 	 */
-	public List<CharacterModel> list();
+	public void createPlayer(PlayerModel playerModel);
 }

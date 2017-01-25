@@ -18,6 +18,7 @@ import com.paradigma.beans.request.PlayerCreation;
 import com.paradigma.beans.response.Character;
 import com.paradigma.beans.response.Player;
 import com.paradigma.model.CharacterModel;
+import com.paradigma.model.PlayerModel;
 import com.paradigma.services.PlayersService;
 
 import io.swagger.annotations.Api;
@@ -57,22 +58,31 @@ public class PlayersController {
 			@RequestBody(required=true) @Valid PlayerCreation playerRequest) {
 
 		log.info("POST -> /players {}", playerRequest);
-		//List<CharacterModel> serviceResult = service.list();
 		
-//		List<Character> result = new ArrayList<>();
-//		serviceResult.stream().forEach(c -> result.add(transformCharacter(c)));
+		PlayerModel playerModel = transformPlayer(playerRequest, token);
+		service.createPlayer(playerModel);
 		
-		return new ResponseEntity<Player>(new Player(), HttpStatus.CREATED);
+		Player result = new Player();
+		BeanUtils.copyProperties(playerModel, result);
+		result.setCharacter(new Character());
+		BeanUtils.copyProperties(playerModel.getCharacter(), result.getCharacter());
+		
+		return new ResponseEntity<Player>(result, HttpStatus.CREATED);
 	}
 
+	
 	//////////////////////////////
 	// Private functions
 	//////////////////////////////
 	
-	private Character transformCharacter(CharacterModel characterModel) {
-		Character character = new Character();
-		BeanUtils.copyProperties(characterModel, character);
-		return character;
+	private PlayerModel transformPlayer(PlayerCreation source, String token) {
+		PlayerModel target = new PlayerModel();
+		target.setUserId(token); // In future releases we'll have to extract the user id (client id) from the JWT token
+		target.setUserName(source.getUserName());
+		target.setCharacter(new CharacterModel());
+		BeanUtils.copyProperties(source.getCharacter(), target.getCharacter());
+
+		return target;
 	}
 
 	

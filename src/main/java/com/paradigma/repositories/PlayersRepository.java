@@ -1,14 +1,12 @@
 package com.paradigma.repositories;
 
-import java.util.List;
-
-import com.paradigma.model.CharacterModel;
+import com.paradigma.model.PlayerModel;
 
 public interface PlayersRepository {
 
 	/**
-	 * This method retrieves all the available characters stored in the persistence layer
-	 * @return The list containing all the available characters
+	 * This method creates a new Player
+	 * @param playerModel The input parameters to create the player
 	 */
-	public List<CharacterModel> list();
+	public void createPlayer(PlayerModel playerModel);
 }

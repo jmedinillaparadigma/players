@@ -1,7 +1,6 @@
 package com.paradigma.repositories.mongodb.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +15,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Document(collection="characters")
 public class CharacterMongo {
 
 	@Id
