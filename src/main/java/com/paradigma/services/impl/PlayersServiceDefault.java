@@ -1,5 +1,7 @@
 package com.paradigma.services.impl;
 
+import javax.management.InstanceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,16 @@ public class PlayersServiceDefault implements PlayersService {
 	@Override
 	public void createPlayer(PlayerModel playerModel) {
 		repository.createPlayer(playerModel);
+	}
+
+	/**
+	 * This method gets a player by its id
+	 * @return The Player with the provided id
+	 * @throws InstanceNotFoundException 
+	 */
+	@Override
+	public PlayerModel getPlayerById(String id) throws InstanceNotFoundException {
+		return repository.getPlayerById(id);
 	}
 	
 	

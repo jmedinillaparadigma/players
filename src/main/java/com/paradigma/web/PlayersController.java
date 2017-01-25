@@ -1,5 +1,6 @@
 package com.paradigma.web;
 
+import javax.management.InstanceNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,9 +53,9 @@ public class PlayersController {
 			@ApiResponse(code = 400, message = "Bad request"),
 			@ApiResponse(code = 424, message = "Failed external dependecy"),
 			@ApiResponse(code = 500, message = "Server error") })
-	@RequestMapping(value = "/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Player> retrieveAvailableCharacters(
+	public ResponseEntity<Player> createPlayer(
 			@RequestHeader("Authorization") String token,
 			@RequestBody(required=true) @Valid PlayerCreation playerRequest) {
 
@@ -62,18 +64,49 @@ public class PlayersController {
 		PlayerModel playerModel = transformPlayer(playerRequest, token);
 		service.createPlayer(playerModel);
 		
-		Player result = new Player();
-		BeanUtils.copyProperties(playerModel, result);
-		result.setCharacter(new Character());
-		BeanUtils.copyProperties(playerModel.getCharacter(), result.getCharacter());
+		return new ResponseEntity<Player>(transformPlayerResult(playerModel), HttpStatus.CREATED);
+	}
+	
+	
+	/**
+	 * This method gets a player by its id
+	 * @return The Player with the provided id
+	 * @throws InstanceNotFoundException 
+	 */
+	@ApiOperation(value = "Retrieves a player by its id")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Retrieves the player with the provided id", response = Player.class),
+			@ApiResponse(code = 400, message = "Bad request"),
+			@ApiResponse(code = 404, message = "Player not found"),
+			@ApiResponse(code = 424, message = "Failed external dependecy"),
+			@ApiResponse(code = 500, message = "Server error") })
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Player> retrievePlayerById(
+			@RequestHeader("Authorization") String token,
+			@PathVariable(required=true) String id) throws InstanceNotFoundException {
+
+		log.info("GET -> /players/{id} {}", id);
 		
-		return new ResponseEntity<Player>(result, HttpStatus.CREATED);
+		
+		PlayerModel playerModel = service.getPlayerById(id);
+		
+		return ResponseEntity.ok(transformPlayerResult(playerModel));
 	}
 
 	
 	//////////////////////////////
 	// Private functions
 	//////////////////////////////
+	
+	private Player transformPlayerResult(PlayerModel source) {
+		Player result = new Player();
+		BeanUtils.copyProperties(source, result);
+		result.setCharacter(new Character());
+		BeanUtils.copyProperties(source.getCharacter(), result.getCharacter());
+
+		return result;
+	}
 	
 	private PlayerModel transformPlayer(PlayerCreation source, String token) {
 		PlayerModel target = new PlayerModel();
